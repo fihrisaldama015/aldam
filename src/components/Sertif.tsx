@@ -7,8 +7,11 @@ function Sertif() {
       >
         <h3 className="mb-5 font-bold text-xl">Certificate</h3>
         <div className="container-sertif flex flex-col items-stretch gap-4">
-          {sertif.map((item) => (
-            <div className="sertif flex bg-[#f8fafc] rounded-2xl text-[#0f172a] text-left border border-[#0001] hover:bg-[#f4f4f4]">
+          {sertif.map((item, id) => (
+            <div
+              key={id}
+              className="sertif flex bg-[#f8fafc] rounded-2xl text-[#0f172a] text-left border border-[#0001] hover:bg-[#f4f4f4]"
+            >
               <img
                 src={item.img}
                 className="rounded-2xl bg-cover"
