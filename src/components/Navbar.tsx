@@ -102,7 +102,7 @@ function Navbar({ sections, scrollToSection }: NavbarProps) {
 
   return (
     <motion.nav 
-      className={`py-4 sm:px-6 px-4 flex flex-col md:flex-row justify-between items-center backdrop-blur-sm ${scrolled ? "shadow-md bg-white/80" : "bg-transparent"} transition-all duration-300 sticky top-0 z-10`}
+      className={`py-4 sm:px-6 px-4 rounded-xl flex flex-col md:flex-row justify-between items-center backdrop-blur-sm ${scrolled ? "shadow-md bg-white/80" : "bg-transparent"} transition-all duration-300 sticky top-3 z-10`}
       initial="hidden"
       animate="visible"
       variants={navbarVariants}
@@ -125,7 +125,7 @@ function Navbar({ sections, scrollToSection }: NavbarProps) {
           />
           
           <motion.h1 
-            className="font-bold text-xl text-[#1e293b] relative z-10"
+            className="font-semibold text-lg text-[#1e293b] relative z-10"
             variants={logoVariants}
             whileHover="hover"
             onClick={() => scrollToSection(sections[0].ref)}
