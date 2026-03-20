@@ -3,6 +3,38 @@ const workExperiences = [
     {
         id: 1,
         type: 'work',
+        role: 'Software Developer',
+        company: 'Blue Silo',
+        location: 'Singapore (Remote)',
+        duration: 'Jun 2025 - Feb 2026',
+        description: 'Architected scalable IoT pipelines and SaaS infrastructure for smart restroom monitoring and real-time telemetry systems handling 500K–1M+ records.',
+        responsibilities: [
+            'Smart Restroom Dual-Database & Analytics: Designed a resilient architecture routing raw IoT payloads to MongoDB (write-optimized) and structured sensor data to PostgreSQL (via Prisma). Slashed Power BI dashboard refresh times from 15 minutes to under 1 minute for massive datasets (500,000–1,000,000+ records) by engineering flattened, pre-aggregated SQL Views.',
+            'Axora Event-Driven IoT Pipeline: Architected a real-time telemetry pipeline connecting devices to a Node.js/Nest.js backend via MQTT. Bridged event streams using RabbitMQ to a Socket.io gateway, ensuring isolated, multi-tenant WebSocket connections.',
+            'Frontend Performance Optimization: Optimized real-time UI rendering in the React frontend (Axora) by implementing a 1000ms debouncing strategy combined with React Query caching, preventing browser bottlenecks during high-frequency sensor data streams.',
+            'Data Lifecycle & Cloud Infrastructure: Containerized multiple backend services and frontend apps using Docker, managed via automated Bitbucket Pipelines. Implemented MongoDB TTL indexes for automated archiving of 30-to-365-day device telemetry logs.',
+            'SaaS Security & Billing Integration: Integrated Stripe for subscription management, securing webhooks with strict signature verification. Enforced global API payload validation using Zod and secured multi-tenant data access with strict isolation guards.'
+        ]
+    },
+    {
+        id: 2,
+        type: 'work',
+        role: 'Full Stack & Mobile Developer',
+        company: 'PT. Porlone Digital Agency',
+        location: 'Sidoarjo, Indonesia',
+        duration: 'Mar 2025 - Dec 2025',
+        description: 'Architected and developed a comprehensive multi-tenant SaaS platform comprising 4 distinct React Native / Expo applications (POS, Owner, Employee, Client).',
+        responsibilities: [
+            'Multi-App SaaS Architecture: Architected and developed a comprehensive multi-tenant SaaS platform comprising 4 distinct React Native / Expo applications (POS, Owner, Employee, Client). Implemented branch-level data isolation and server-driven Role-Based Access Control (RBAC).',
+            'Advanced State & Cache Management: Engineered a highly reliable point-of-sale system using domain-split Zustand stores for complex cart and queue operations. Integrated React Query for pessimistic data synchronization, utilizing cascading cache invalidations to guarantee financial data accuracy post-transaction.',
+            'BLE Hardware Integration: Integrated external hardware via Bluetooth Low Energy (BLE) using react-native-ble-plx and custom native modules. Enabled automated thermal printing for transaction receipts, queue tickets, and end-of-shift Z-reports with background auto-reconnect capabilities.',
+            'Local Database & Performance: Optimized high-frequency product grid rendering using FlashList for predictive layouts. Architected a local storage layer utilizing SQLite and Drizzle ORM to manage structured data, laying the groundwork for offline-first transaction queues.',
+            'Mobile CI/CD Pipeline: Established a streamlined mobile deployment pipeline via Expo Application Services (EAS). Configured 3 isolated build environments (Development, Preview, Production) with distinct package names to enable simultaneous multi-environment testing on single devices.'
+        ]
+    },
+    {
+        id: 3,
+        type: 'work',
         role: 'Frontend Developer - Contract',
         company: 'PT. Setara Komunika Futura',
         location: 'Tangerang, Indonesia',
@@ -18,12 +50,12 @@ const workExperiences = [
         ]
     },
     {
-        id: 2,
+        id: 4,
         type: 'work',
         role: 'Frontend Engineer',
         company: 'Eftranet',
         location: 'Jombang, East Java, Indonesia',
-        duration: 'Jul 2024 - Jan 2024',
+        duration: 'Jul 2024 - Jan 2025',
         description: 'Built a comprehensive web application for one of Indonesia\'s top 10 universities, designed to strengthen alumni engagement and institutional development.',
         responsibilities: [
             'Developed Frontend Platform for Institut Teknologi Bandung (ITB) Alumni',
@@ -33,7 +65,7 @@ const workExperiences = [
         ]
     },
     {
-        id: 3,
+        id: 5,
         type: 'work',
         role: 'Frontend Engineer',
         company: 'ADS Digital Partner (PT. Adma Digital Solusi)',
@@ -49,7 +81,7 @@ const workExperiences = [
         ]
     },
     {
-        id: 4,
+        id: 6,
         type: 'education',
         role: 'Cloud Computing Learning Path',
         company: 'Bangkit Academy led by Google, Tokopedia, Gojek, & Traveloka',
@@ -65,7 +97,7 @@ const workExperiences = [
         ]
     },
     {
-        id: 5,
+        id: 7,
         type: 'work',
         role: 'Freelance - Self Employed',
         company: 'Bantuin Tech Solutions',
@@ -79,7 +111,7 @@ const workExperiences = [
         ]
     },
     {
-        id: 6,
+        id: 8,
         type: 'work',
         role: 'Mini Project Intern Front End Developer',
         company: 'PT. Sinergi Merah Putih',
@@ -93,7 +125,7 @@ const workExperiences = [
         ]
     },
     {
-        id: 7,
+        id: 9,
         type: 'work',
         role: 'Web Developer',
         company: 'Agroteknologi UPN Veteran Jawa Timur',
@@ -110,17 +142,17 @@ const workExperiences = [
 // Education and organizational experiences
 const educationAndOrg = [
     {
-        id: 8,
+        id: 10,
         type: 'education',
         role: 'Bachelor of Informatics, 3.93/4.00',
         company: 'Universitas Pembangunan Nasional Veteran Jawa Timur',
         location: 'Surabaya, Indonesia',
-        duration: 'Jun 2021 - Jun 2025 (Expected)',
+        duration: 'Jun 2021 - Dec 2025',
         description: '',
         responsibilities: []
     },
     {
-        id: 9,
+        id: 11,
         type: 'organization',
         role: 'Website Lead',
         company: 'FASILKOM SAVE',
@@ -133,7 +165,7 @@ const educationAndOrg = [
         ]
     },
     {
-        id: 10,
+        id: 12,
         type: 'organization',
         role: 'Lead of Education Division',
         company: 'ILC (Informatics Learning Community)',
@@ -143,7 +175,7 @@ const educationAndOrg = [
         responsibilities: []
     },
     {
-        id: 11,
+        id: 13,
         type: 'organization',
         role: 'Head of Web Division',
         company: 'PEMIRA',
@@ -156,7 +188,7 @@ const educationAndOrg = [
         ]
     },
     {
-        id: 12,
+        id: 14,
         type: 'organization',
         role: 'Staff of Education Division',
         company: 'ILC (Informatics Learning Community)',

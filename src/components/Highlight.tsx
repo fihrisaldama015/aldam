@@ -171,12 +171,24 @@ const SKILLS: Skill[] = [
     name: "React Native"
   },
   {
-    img: "/icons/php.svg",
-    name: "PHP"
+    img: "/icons/nestjs.svg",
+    name: "NestJS",
   },
   {
-    img: "/icons/laravel.svg",
-    name: "Laravel"
+    img: "/icons/prisma.svg",
+    name: "Prisma",
+  },
+  {
+    img: "/icons/rabbitmq.svg",
+    name: "RabbitMQ",
+  },
+  {
+    img: "/icons/expo.svg",
+    name: "Expo",
+  },
+  {
+    img: "/icons/sqlite.svg",
+    name: "SQLite",
   },
   {
     img: "/icons/mysql.svg",
@@ -203,16 +215,24 @@ const SKILLS: Skill[] = [
     name: "Docker",
   },
   {
+    img: "/icons/mqtt.svg",
+    name: "MQTT",
+  },
+  {
+    img: "/icons/nginx.svg",
+    name: "Nginx",
+  },
+  {
+    img: "/icons/bitbucket.svg",
+    name: "Bitbucket CI/CD",
+  },
+  {
     img: "/icons/gitlab.svg",
     name: "GitLab",
   },
   {
     img: "/icons/github.svg",
     name: "GitHub",
-  },
-  {
-    img: "/icons/WordPress.com.svg",
-    name: "WordPress",
   },
   {
     img: "/icons/figma.svg",

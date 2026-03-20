@@ -32,7 +32,8 @@ function Hero() {
   const photoContainerVariants: Variants = {
     hover: {
       scale: 1.05,
-      background: "linear-gradient(to bottom, rgba(14, 116, 144, 0.6), rgba(55, 65, 81, 0.1))",
+      background:
+        "linear-gradient(to bottom, rgba(14, 116, 144, 0.6), rgba(55, 65, 81, 0.1))",
       transition: { duration: 0.3 },
     },
   };
@@ -69,7 +70,9 @@ function Hero() {
     },
   };
 
-  const [gradientClass, setGradientClass] = useState("bg-gradient-to-b from-[rgba(14,116,144,0.4)] to-transparent");
+  const [gradientClass, setGradientClass] = useState(
+    "bg-gradient-to-b from-[rgba(14,116,144,0.4)] to-transparent",
+  );
 
   return (
     <motion.div
@@ -108,10 +111,11 @@ function Hero() {
           className="text-slate-700 tracking-wide max-w-md text-sm leading-relaxed"
           variants={itemVariants}
         >
-          Informatics Undergraduate at UPN "Veteran" Jawa Timur | Passionate in Software Engineering. Motivated and fast-learning informatics
-          student with a strong interest in software engineering. Skilled in building scalable front-end applications and robust back-end APIs.
-          Experienced in team collaboration, project coordination, and effective communication. Proven ability to adapt quickly, perform under
-          pressure, and deliver high-quality results through academic projects, internships, and freelance work.
+          Full-Stack Software Engineer specializing in the React ecosystem (Web
+          & Native) and Node.js backend. Experienced in architecting scalable,
+          event-driven systems from real-time IoT telemetry pipelines to complex
+          multi-tenant SaaS platforms. I turn complex business requirements into
+          high-performance, production-ready solutions.
         </motion.p>
 
         <motion.div
@@ -124,11 +128,27 @@ function Hero() {
             className="bg-sky-600 text-white px-6 py-3 rounded-lg font-semibold flex items-center gap-2"
             whileHover={{ scale: 1.05, backgroundColor: "#0284c7" }}
             whileTap={{ scale: 0.95 }}
-            onClick={() => window.open("https://wa.me/6285156549426?text=Halo%20Fihris%20Aldama, i want to discuss about my project", "_blank")}
+            onClick={() =>
+              window.open(
+                "https://wa.me/6285156549426?text=Halo%20Fihris%20Aldama, i want to discuss about my project",
+                "_blank",
+              )
+            }
           >
             <span>Get in touch</span>
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M14 5l7 7m0 0l-7 7m7-7H3"
+              />
             </svg>
           </motion.button>
         </motion.div>
@@ -140,17 +160,21 @@ function Hero() {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5, delay: 0.5 }}
       >
-       <motion.div 
+        <motion.div
           className={`elemenFoto relative rounded-tl-full rounded-tr-full translate-y-8 p-6 ${gradientClass}`}
           variants={photoContainerVariants}
           whileHover="hover"
           onHoverStart={() => {
             setIsHovered(true);
-            setGradientClass("bg-gradient-to-b from-[rgba(14,116,144,0.6)] to-[rgba(55,65,81,0.1)]");
+            setGradientClass(
+              "bg-gradient-to-b from-[rgba(14,116,144,0.6)] to-[rgba(55,65,81,0.1)]",
+            );
           }}
           onHoverEnd={() => {
             setIsHovered(false);
-            setGradientClass("bg-gradient-to-b from-[rgba(14,116,144,0.4)] to-transparent");
+            setGradientClass(
+              "bg-gradient-to-b from-[rgba(14,116,144,0.4)] to-transparent",
+            );
           }}
         >
           <motion.div
