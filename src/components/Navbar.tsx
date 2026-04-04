@@ -21,17 +21,20 @@ export default function Navbar({ sections }: NavbarProps) {
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
-      for (const section of sections) {
-        const el = document.getElementById(section.id);
-        if (!el) continue;
-        const rect = el.getBoundingClientRect();
-        if (rect.top <= 100 && rect.bottom > 100) {
-          setActiveSection(section.id);
-          break;
+      
+      // Calculate active section based on scroll position accurately for sticky 100vh elements
+      if (typeof window !== "undefined") {
+        const index = Math.round(window.scrollY / window.innerHeight);
+        if (sections[index]) {
+          setActiveSection(sections[index].id);
         }
       }
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
+    
+    // Trigger once on mount
+    handleScroll();
+    
     return () => window.removeEventListener("scroll", handleScroll);
   }, [sections]);
 

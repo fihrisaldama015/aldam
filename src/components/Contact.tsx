@@ -32,10 +32,7 @@ const ACCENT_MAP: Record<Accent, string> = {
 
 export default function Contact() {
   return (
-    <section
-      id="contact"
-      className="min-h-screen flex items-center justify-center px-6 lg:px-16 relative overflow-hidden"
-    >
+    <div className="w-full h-full flex items-center justify-center px-6 lg:px-16 relative overflow-hidden">
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-cyan-500/5 rounded-full blur-3xl" />
       </div>
@@ -102,6 +99,6 @@ export default function Contact() {
           Aldam · {new Date().getFullYear()} · Full-Stack Engineer
         </motion.p>
       </div>
-    </section>
+    </div>
   );
 }

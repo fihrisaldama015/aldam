@@ -33,10 +33,7 @@ const SKILLS: Skill[] = [
 
 export default function Highlight() {
   return (
-    <section
-      id="skills"
-      className="min-h-screen flex items-center justify-center px-6 lg:px-16 relative overflow-hidden"
-    >
+    <div className="w-full h-full flex items-center justify-center px-6 lg:px-16 relative overflow-hidden">
       <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-5xl w-full mx-auto py-20">
@@ -116,6 +113,6 @@ export default function Highlight() {
           ))}
         </motion.div>
       </div>
-    </section>
+    </div>
   );
 }

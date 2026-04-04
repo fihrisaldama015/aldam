@@ -4,10 +4,7 @@ import Image from "next/image";
 
 export default function Hero() {
   return (
-    <section
-      id="home"
-      className="min-h-screen flex items-center justify-center px-6 lg:px-16 relative overflow-hidden"
-    >
+    <div className="w-full h-full flex items-center justify-center px-6 lg:px-16 relative overflow-hidden">
       {/* Background glows */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 -left-20 w-72 h-72 bg-amber-500/10 rounded-full blur-3xl" />
@@ -154,6 +151,6 @@ export default function Hero() {
           />
         </motion.div>
       </div>
-    </section>
+    </div>
   );
 }

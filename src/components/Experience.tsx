@@ -46,10 +46,7 @@ const ExperienceTimeline = () => {
   };
 
   return (
-    <section
-      id="experience"
-      className="min-h-screen flex items-center justify-center px-6 lg:px-16 relative overflow-hidden"
-    >
+    <div className="w-full h-full flex flex-col pt-24 items-center px-6 lg:px-16 relative overflow-y-auto overflow-x-hidden">
       <div className="absolute top-1/4 left-0 w-80 h-80 bg-blue-500/5 rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-4xl w-full mx-auto py-20">
@@ -178,7 +175,7 @@ const ExperienceTimeline = () => {
           ))}
         </div>
       </div>
-    </section>
+    </div>
   );
 };
 
