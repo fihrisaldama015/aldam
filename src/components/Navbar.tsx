@@ -39,18 +39,22 @@ export default function Navbar({ sections }: NavbarProps) {
   }, [sections]);
 
   const scrollTo = (id: string) => {
+    const sectionIndex = sections.findIndex((section) => section.id === id);
+    const targetY = sectionIndex >= 0 ? sectionIndex * window.innerHeight : 0;
+    window.dispatchEvent(new Event("portfolio:navigation-start"));
+
     if (lenis) {
       lenis.start();
-      lenis.scrollTo(`#${id}`, { offset: 0 });
+      lenis.scrollTo(targetY, { force: true });
     } else {
-      document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+      window.scrollTo({ top: targetY, behavior: "smooth" });
     }
     setMenuOpen(false);
   };
 
   return (
     <motion.nav
-      className={`fixed top-0 left-0 right-0 z-50 px-6 py-4 flex justify-between items-center transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-[999] pointer-events-auto px-6 py-4 flex justify-between items-center transition-all duration-300 ${
         scrolled
           ? "bg-slate-900/90 backdrop-blur-md border-b border-white/5"
           : "bg-transparent"

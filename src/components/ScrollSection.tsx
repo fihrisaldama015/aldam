@@ -1,5 +1,10 @@
 "use client";
-import { motion, useScroll, useTransform } from "framer-motion";
+import {
+  motion,
+  useMotionTemplate,
+  useScroll,
+  useTransform,
+} from "framer-motion";
 import { createContext, useContext, useEffect, useState } from "react";
 import { useLenis } from "./LenisProvider";
 
@@ -53,13 +58,17 @@ export default function ScrollSection({
   const scale = useTransform(scrollY, [startScroll, endScroll], [1, 0.85]);
   const opacity = useTransform(scrollY, [startScroll, endScroll], [1, 0.3]);
   const y = useTransform(scrollY, [startScroll, endScroll], ["0%", "5%"]);
+  const blur = useTransform(scrollY, [startScroll, endScroll], [0, 8]);
+  const filter = useMotionTemplate`blur(${blur}px)`;
 
   // Dwell logic: freeze the page when this section is fully pinned
   useEffect(() => {
     if (noDwell || !globalLenis) return;
 
     // Touch devices have native momentum — dwell would permanently freeze scroll
-    const isTouchDevice = window.matchMedia("(hover: none) and (pointer: coarse)").matches;
+    const isTouchDevice = window.matchMedia(
+      "(hover: none) and (pointer: coarse)",
+    ).matches;
     if (isTouchDevice) return;
 
     const PIN_Y = index * window.innerHeight;
@@ -88,7 +97,7 @@ export default function ScrollSection({
           }
         }
         prevScroll = scroll;
-      }
+      },
     );
 
     // Count wheel delta silently; release only after DWELL_THRESHOLD is met
@@ -118,7 +127,7 @@ export default function ScrollSection({
         className="sticky top-0 h-screen w-full flex flex-col justify-center overflow-hidden bg-[#0f172a]"
       >
         <motion.div
-          style={{ scale, opacity, y }}
+          style={{ scale, opacity, y, filter }}
           className="w-full h-full flex flex-col items-center justify-center origin-top relative"
         >
           {children}

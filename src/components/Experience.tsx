@@ -24,43 +24,51 @@ const ExperienceTimeline = () => {
   useEffect(() => {
     if (!wrapperRef.current || !contentRef.current || !globalLenis) return;
 
-    // Mobile/touch devices should use normal page scroll to avoid lock dead-ends.
-    const isTouchDevice = window.matchMedia(
-      "(hover: none) and (pointer: coarse)",
-    ).matches;
-    if (isTouchDevice) return;
-
     const PIN_Y = 3 * window.innerHeight;
     const wrapper = wrapperRef.current;
 
     let engaged = false;
     let prevScroll = globalLenis.scroll ?? 0;
+    let suspendEngageUntil = 0;
 
-    // Invisible to wheel events until engaged
+    // Disabled until the section is reached.
     wrapper.style.pointerEvents = "none";
 
-    // Internal Lenis instance
     const innerLenis = new Lenis({
       wrapper,
       content: contentRef.current,
       autoRaf: true,
-      wheelMultiplier: 0.5, // Match global scroll resistance
+      wheelMultiplier: 0.5,
+      touchMultiplier: 0.5,
       lerp: 0.06,
     });
 
-    // Detect when global scroll crosses the Experience pin point in either direction
+    const handleNavigationStart = () => {
+      suspendEngageUntil = Date.now() + 1500;
+      if (engaged) {
+        engaged = false;
+        wrapper.style.pointerEvents = "none";
+        globalLenis.start();
+      }
+    };
+
+    window.addEventListener(
+      "portfolio:navigation-start",
+      handleNavigationStart,
+    );
+
     const unsubscribe = globalLenis.on(
       "scroll",
       ({ scroll }: { scroll: number }) => {
-        if (!engaged) {
+        if (!engaged && Date.now() >= suspendEngageUntil) {
           const crossedDown = prevScroll < PIN_Y && scroll >= PIN_Y;
           const crossedUp = prevScroll > PIN_Y && scroll <= PIN_Y;
+          const nearPin = Math.abs(scroll - PIN_Y) <= window.innerHeight * 0.4;
 
-          if (crossedDown || crossedUp) {
+          if ((crossedDown || crossedUp) && nearPin) {
             engaged = true;
-            globalLenis.stop(); // Lock page at this position
+            globalLenis.stop();
             wrapper.style.pointerEvents = "auto";
-            // Reset internal scroll to correct starting edge
             wrapper.scrollTop = crossedDown
               ? 0
               : wrapper.scrollHeight - wrapper.clientHeight;
@@ -70,7 +78,6 @@ const ExperienceTimeline = () => {
       },
     );
 
-    // Wheel handler: boundary detection to release back to global Lenis
     const handleWheel = (e: WheelEvent) => {
       if (!engaged) return;
 
@@ -79,17 +86,14 @@ const ExperienceTimeline = () => {
         wrapper.scrollTop + wrapper.clientHeight >= wrapper.scrollHeight - 2;
 
       if ((e.deltaY < 0 && atTop) || (e.deltaY > 0 && atBottom)) {
-        // Internal scroll exhausted — resume page scroll
         engaged = false;
         wrapper.style.pointerEvents = "none";
         globalLenis.start();
         return;
       }
-      // Still has room — consume the event internally
       e.stopPropagation();
     };
 
-    // Touch handler: same boundary detection for mobile
     let touchStartY = 0;
     let shouldRelease = false;
 
@@ -101,8 +105,7 @@ const ExperienceTimeline = () => {
 
     const handleTouchMove = (e: TouchEvent) => {
       if (!engaged) return;
-      const deltaY = touchStartY - e.touches[0].clientY; // positive = scroll down
-
+      const deltaY = touchStartY - e.touches[0].clientY;
       const atTop = wrapper.scrollTop <= 2;
       const atBottom =
         wrapper.scrollTop + wrapper.clientHeight >= wrapper.scrollHeight - 2;
@@ -128,6 +131,10 @@ const ExperienceTimeline = () => {
     return () => {
       unsubscribe();
       innerLenis.destroy();
+      window.removeEventListener(
+        "portfolio:navigation-start",
+        handleNavigationStart,
+      );
       wrapper.removeEventListener("wheel", handleWheel);
       wrapper.removeEventListener("touchstart", handleTouchStart);
       wrapper.removeEventListener("touchmove", handleTouchMove);
