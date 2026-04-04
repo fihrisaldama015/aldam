@@ -21,7 +21,10 @@ const ExperienceTimeline = () => {
 
   useEffect(() => {
     if (!wrapperRef.current || !contentRef.current) return;
-    
+
+    // Section is at index 3, so it pins at 3 * window.innerHeight
+    const SECTION_INDEX = 3;
+
     // Create an internal Lenis instance for smooth scrolling within this section
     const lenis = new Lenis({
       wrapper: wrapperRef.current,
@@ -31,16 +34,20 @@ const ExperienceTimeline = () => {
 
     const wrapper = wrapperRef.current;
 
-    // Custom scroll chaining logic
     const handleWheel = (e: WheelEvent) => {
-      // Allow global Lenis to take over if we hit the boundaries
-      if (e.deltaY < 0 && wrapper.scrollTop <= 0) {
-        return; // Bubble up for scroll up
-      }
-      if (e.deltaY > 0 && wrapper.scrollTop + wrapper.clientHeight >= wrapper.scrollHeight - 1) {
-        return; // Bubble up for scroll down 
-      }
-      // Otherwise, keep the event local to make the internal Lenis scroll smoothly
+      const sectionPinY = SECTION_INDEX * window.innerHeight;
+      const isPinned = window.scrollY >= sectionPinY - 2; // -2px tolerance
+
+      // PHASE 1: section not yet fully pinned — let global Lenis handle page scroll
+      if (!isPinned) return;
+
+      // PHASE 2: section is pinned, but internal scroll is at the start and user scrolls up
+      if (e.deltaY < 0 && wrapper.scrollTop <= 0) return;
+
+      // PHASE 3: section is pinned, but internal scroll is exhausted and user scrolls down
+      if (e.deltaY > 0 && wrapper.scrollTop + wrapper.clientHeight >= wrapper.scrollHeight - 2) return;
+
+      // PHASE 4: section is pinned + internal scroll has room — capture it
       e.stopPropagation();
     };
 
