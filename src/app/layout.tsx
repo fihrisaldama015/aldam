@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
 import { sfprodisplay } from "@/fonts/font";
-
-const inter = Inter({ subsets: ["latin"] });
+import LenisProvider from "@/components/LenisProvider";
 
 export const metadata: Metadata = {
   title: "Aldam | Personal Website",
@@ -20,7 +18,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={sfprodisplay.className}>{children}</body>
+      <body className={sfprodisplay.className}>
+        <LenisProvider>
+          {children}
+        </LenisProvider>
+      </body>
     </html>
   );
 }
