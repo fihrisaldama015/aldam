@@ -1,216 +1,184 @@
 "use client";
-import { motion } from 'framer-motion';
+import { motion } from "framer-motion";
 import {
   Briefcase,
   Building,
   Calendar,
   ChevronDown,
   ChevronUp,
-  Code,
   GraduationCap,
   MapPin,
-  Users
-} from 'lucide-react';
-import { useState } from 'react';
-import { educationAndOrg, workExperiences } from '../data/experience';
+  Users,
+} from "lucide-react";
+import { useState } from "react";
+import { educationAndOrg, workExperiences } from "../data/experience";
 
 const ExperienceTimeline = () => {
   const [expandedIds, setExpandedIds] = useState<number[]>([]);
 
   const toggleExpand = (id: number) => {
-    if (expandedIds.includes(id)) {
-      setExpandedIds(expandedIds.filter(item => item !== id));
-    } else {
-      setExpandedIds([...expandedIds, id]);
-    }
+    setExpandedIds((prev) =>
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
+    );
   };
 
-  const isExpanded = (id: number) => expandedIds.includes(id);
-
-  const allExperiences = [...workExperiences, ...educationAndOrg].sort((a, b) => {
-    const getEndYear = (duration: string) => {
-      const match = duration.match(/\d{4}(?!.*\d{4})/);
-      return match ? parseInt(match[0]) : 0;
-    };
-
-    return getEndYear(b.duration) - getEndYear(a.duration);
-  });
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
+  const allExperiences = [...workExperiences, ...educationAndOrg].sort(
+    (a, b) => {
+      const getEndYear = (d: string) => {
+        const m = d.match(/\d{4}(?!.*\d{4})/);
+        return m ? parseInt(m[0]) : 0;
+      };
+      return getEndYear(b.duration) - getEndYear(a.duration);
     }
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.5
-      }
-    }
-  };
+  );
 
   const getTypeIcon = (type: string) => {
     switch (type) {
-      case 'work':
-        return <Briefcase className="text-sky-600" />;
-      case 'education':
-        return <GraduationCap className="text-sky-600" />;
-      case 'organization':
-        return <Users className="text-sky-600" />;
+      case "work":
+        return <Briefcase size={14} className="text-blue-400" />;
+      case "education":
+        return <GraduationCap size={14} className="text-blue-400" />;
+      case "organization":
+        return <Users size={14} className="text-blue-400" />;
       default:
-        return <Briefcase className="text-sky-600" />;
+        return <Briefcase size={14} className="text-blue-400" />;
     }
   };
 
   return (
-    <div className="my-12 w-full max-w-5xl mx-auto py-16" id="projects">
-      <div className="flex flex-col items-center mb-8 sm:mb-10">
-        <span className="bg-sky-100 p-3 rounded-full mb-3">
-          <Briefcase className="text-sky-600" size={24} />
-        </span>
-        <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 text-center">
-          Professional Experience & Organization
-        </h2>
-        <p className="text-slate-600 mt-2 text-center text-sm sm:text-base max-w-2xl">
-          My journey as a software engineer, showcasing professional growth and diverse project experiences.
-        </p>
-      </div>
+    <section
+      id="experience"
+      className="min-h-screen flex items-center justify-center px-6 lg:px-16 relative overflow-hidden"
+    >
+      <div className="absolute top-1/4 left-0 w-80 h-80 bg-blue-500/5 rounded-full blur-3xl pointer-events-none" />
 
-      <motion.div
-        className="relative"
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-      >
-        {/* Timeline line - visible only on larger screens */}
-        <div className="hidden md:block absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-sky-100 rounded-full"></div>
+      <div className="max-w-4xl w-full mx-auto py-20">
+        <motion.div
+          className="mb-16"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.1 }}
+          transition={{ duration: 0.6 }}
+        >
+          <span className="text-blue-400 text-sm font-semibold tracking-[4px] uppercase">
+            Where I&apos;ve been
+          </span>
+          <h2 className="text-4xl md:text-5xl font-black text-white mt-3 tracking-tight">
+            Work <span className="text-blue-400">History</span>
+          </h2>
+        </motion.div>
 
-        {/* Timeline line - visible only on mobile */}
-        <div className="md:hidden absolute left-8 h-full w-1 bg-sky-100 rounded-full"></div>
-
-        {allExperiences.map((exp, index) => (
+        <div className="relative">
+          {/* Timeline line */}
           <motion.div
-            key={exp.id}
-            variants={itemVariants}
-            className={`mb-12 flex relative
-                ${index % 2 === 0 ? 'md:flex-row-reverse' : 'md:flex-row'}`}
-          >
-            {/* Timeline dot for desktop - positioned in center */}
-            <div className="hidden md:block absolute left-1/2 transform -translate-x-1/2 z-10">
-              <div className="w-6 h-6 rounded-full bg-sky-600 border-4 border-sky-100 z-10 shadow-lg" />
-              <span className={`text-xl w-max text-sky-600/30 font-bold absolute top-1/2 transform -translate-y-1/2 ${index % 2 === 0 ? 'right-16' : 'left-16'}`}>
-                {exp.duration.split(" - ")[0]}
-              </span>
-            </div>
+            className="absolute left-4 md:left-1/2 top-0 bottom-0 w-px bg-blue-400/20 md:-translate-x-1/2"
+            initial={{ scaleY: 0, originY: 0 }}
+            whileInView={{ scaleY: 1 }}
+            viewport={{ once: true, amount: 0.05 }}
+            transition={{ duration: 1.2, ease: "easeInOut" }}
+          />
 
-            {/* Timeline dot for mobile - positioned on left */}
-            <div className="md:hidden absolute left-8 transform -translate-x-1/2 z-10">
-              <div className="w-6 h-6 rounded-full bg-sky-600 border-4 border-sky-100 z-10 shadow-lg" />
-            </div>
-
-            {/* Content - desktop: alternating sides, mobile: always right side */}
+          {allExperiences.map((exp, index) => (
             <motion.div
-              className={`md:w-1/2 pl-16 md:pl-0
-                  ${index % 2 === 0 ? 'md:pl-16' : 'md:pr-16'}`}
-              whileHover={{ scale: 1.02 }}
-              transition={{ type: "spring", stiffness: 300 }}
+              key={exp.id}
+              initial={{ opacity: 0, x: index % 2 === 0 ? -30 : 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.5, delay: index * 0.04 }}
+              className={`mb-8 flex relative ${
+                index % 2 === 0 ? "md:flex-row-reverse" : "md:flex-row"
+              }`}
             >
-              <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-sky-500 hover:shadow-xl transition-shadow duration-300">
-                <div className="flex justify-between items-start mb-3">
-                  <div className="flex items-start">
-                    <div className="p-2 bg-sky-100 rounded-lg mr-3">
-                      {getTypeIcon(exp.type)}
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-lg text-slate-800">{exp.role}</h3>
-                      <div className="flex items-center text-slate-600">
-                        <Building size={16} className="mr-1" />
-                        <span>{exp.company}</span>
+              {/* Desktop dot */}
+              <div className="hidden md:block absolute left-1/2 -translate-x-1/2 z-10 mt-5">
+                <div className="w-3 h-3 rounded-full bg-blue-400 border-2 border-[#0f172a] shadow-lg shadow-blue-400/30" />
+              </div>
+
+              {/* Mobile dot */}
+              <div className="md:hidden absolute left-4 -translate-x-1/2 z-10 mt-5">
+                <div className="w-3 h-3 rounded-full bg-blue-400 border-2 border-[#0f172a]" />
+              </div>
+
+              {/* Card */}
+              <div
+                className={`md:w-[45%] pl-12 md:pl-0 ${
+                  index % 2 === 0 ? "md:pl-8" : "md:pr-8"
+                }`}
+              >
+                <div className="bg-white/5 border border-blue-400/10 rounded-xl p-5 hover:border-blue-400/30 transition-all">
+                  <div className="flex justify-between items-start mb-2">
+                    <div className="flex items-start gap-2">
+                      <div className="p-1.5 bg-blue-400/10 rounded-lg mt-0.5 flex-shrink-0">
+                        {getTypeIcon(exp.type)}
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-white text-sm leading-tight">
+                          {exp.role}
+                        </h3>
+                        <div className="flex items-center text-slate-400 text-xs mt-0.5">
+                          <Building size={11} className="mr-1" />
+                          {exp.company}
+                        </div>
                       </div>
                     </div>
+                    {exp.responsibilities.length > 0 && (
+                      <button
+                        onClick={() => toggleExpand(exp.id)}
+                        className="p-1 hover:bg-blue-400/10 rounded-full transition-colors flex-shrink-0"
+                      >
+                        {expandedIds.includes(exp.id) ? (
+                          <ChevronUp size={16} className="text-blue-400" />
+                        ) : (
+                          <ChevronDown size={16} className="text-blue-400" />
+                        )}
+                      </button>
+                    )}
                   </div>
 
-                  <button
-                    onClick={() => toggleExpand(exp.id)}
-                    className="p-1 hover:bg-sky-100 rounded-full transition-colors"
-                  >
-                    {isExpanded(exp.id) ?
-                      <ChevronUp size={20} className="text-sky-600" /> :
-                      <ChevronDown size={20} className="text-sky-600" />
-                    }
-                  </button>
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-500 mb-2">
+                    <div className="flex items-center gap-1">
+                      <MapPin size={11} />
+                      {exp.location}
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Calendar size={11} />
+                      {exp.duration}
+                    </div>
+                  </div>
+
+                  {exp.description && (
+                    <p className="text-slate-400 text-xs leading-relaxed">
+                      {exp.description}
+                    </p>
+                  )}
+
+                  {expandedIds.includes(exp.id) &&
+                    exp.responsibilities.length > 0 && (
+                      <motion.ul
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        className="mt-3 space-y-1 list-disc list-inside"
+                      >
+                        {exp.responsibilities.map((r, i) => (
+                          <motion.li
+                            key={i}
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: i * 0.07 }}
+                            className="text-xs text-slate-400 ml-2"
+                          >
+                            {r}
+                          </motion.li>
+                        ))}
+                      </motion.ul>
+                    )}
                 </div>
-
-                <div className="flex flex-col sm:flex-row sm:items-center gap-2 text-sm text-slate-500 mb-3">
-                  <div className="flex items-center">
-                    <MapPin size={16} className="mr-1" />
-                    <span>{exp.location}</span>
-                  </div>
-                  <div className="hidden sm:block text-sky-400">•</div>
-                  <div className="flex items-center">
-                    <Calendar size={16} className="mr-1" />
-                    <span>{exp.duration}</span>
-                  </div>
-                </div>
-
-                {exp.description && (
-                  <p className="text-slate-600 mb-3">{exp.description}</p>
-                )}
-
-                {isExpanded(exp.id) && exp.responsibilities.length > 0 && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: "auto" }}
-                    exit={{ opacity: 0, height: 0 }}
-                    transition={{ duration: 0.3 }}
-                    className="mt-4"
-                  >
-                    <h4 className="font-semibold text-slate-700 mb-2 flex items-center">
-                      <Code size={16} className="mr-2 text-sky-600" />
-                      Key Contributions
-                    </h4>
-                    <ul className="list-disc list-inside space-y-1 text-slate-600">
-                      {exp.responsibilities.map((item, i) => (
-                        <motion.li
-                          key={i}
-                          initial={{ opacity: 0, x: -10 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: i * 0.1 }}
-                          className="ml-4"
-                        >
-                          {item}
-                        </motion.li>
-                      ))}
-                    </ul>
-                  </motion.div>
-                )}
-
-                {exp.responsibilities.length > 0 && (
-                  <button
-                    onClick={() => toggleExpand(exp.id)}
-                    className="mt-3 text-sky-600 hover:text-sky-800 text-sm font-medium flex items-center transition-colors"
-                  >
-                    {isExpanded(exp.id) ? 'Show less' : 'Show more'}
-                    {isExpanded(exp.id) ?
-                      <ChevronUp size={16} className="ml-1" /> :
-                      <ChevronDown size={16} className="ml-1" />
-                    }
-                  </button>
-                )}
               </div>
             </motion.div>
-          </motion.div>
-        ))}
-      </motion.div>
-    </div>
+          ))}
+        </div>
+      </div>
+    </section>
   );
 };
 
