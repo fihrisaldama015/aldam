@@ -22,47 +22,73 @@ const ExperienceTimeline = () => {
   const globalLenis = useLenis();
 
   useEffect(() => {
-    if (!wrapperRef.current || !contentRef.current) return;
+    if (!wrapperRef.current || !contentRef.current || !globalLenis) return;
 
-    // Section pins at index 3 × viewport height
-    const SECTION_INDEX = 3;
+    const PIN_Y = 3 * window.innerHeight;
+    const wrapper = wrapperRef.current;
 
-    // Create an internal Lenis instance for smooth scrolling within this section
+    let engaged = false;
+    let prevScroll = globalLenis.scroll ?? 0;
+
+    // Invisible to wheel events until engaged
+    wrapper.style.pointerEvents = "none";
+
+    // Internal Lenis instance
     const innerLenis = new Lenis({
-      wrapper: wrapperRef.current,
+      wrapper,
       content: contentRef.current,
       autoRaf: true,
     });
 
-    const wrapper = wrapperRef.current;
+    // Detect when global scroll crosses the Experience pin point in either direction
+    const unsubscribe = globalLenis.on(
+      "scroll",
+      ({ scroll }: { scroll: number }) => {
+        if (!engaged) {
+          const crossedDown = prevScroll < PIN_Y && scroll >= PIN_Y;
+          const crossedUp = prevScroll > PIN_Y && scroll <= PIN_Y;
 
+          if (crossedDown || crossedUp) {
+            engaged = true;
+            globalLenis.stop(); // Lock page at this position
+            wrapper.style.pointerEvents = "auto";
+            // Reset internal scroll to correct starting edge
+            wrapper.scrollTop = crossedDown
+              ? 0
+              : wrapper.scrollHeight - wrapper.clientHeight;
+          }
+        }
+        prevScroll = scroll;
+      }
+    );
+
+    // Wheel handler: boundary detection to release back to global Lenis
     const handleWheel = (e: WheelEvent) => {
-      const sectionPinY = SECTION_INDEX * window.innerHeight;
+      if (!engaged) return;
 
-      // Use global Lenis animated scroll position (visual position the user sees)
-      // This lags behind window.scrollY during momentum, so gate fires at the
-      // exact visual moment the section becomes fully pinned.
-      const visualScrollY = globalLenis?.scroll ?? window.scrollY;
-      const isPinned = visualScrollY >= sectionPinY - 8;
+      const atTop = wrapper.scrollTop <= 2;
+      const atBottom =
+        wrapper.scrollTop + wrapper.clientHeight >= wrapper.scrollHeight - 2;
 
-      // PHASE 1: section not yet fully visible — let global Lenis page-scroll continue
-      if (!isPinned) return;
-
-      // PHASE 2: pinned, internal at top, scrolling up → hand back to page
-      if (e.deltaY < 0 && wrapper.scrollTop <= 0) return;
-
-      // PHASE 3: pinned, internal at bottom, scrolling down → hand back to page
-      if (e.deltaY > 0 && wrapper.scrollTop + wrapper.clientHeight >= wrapper.scrollHeight - 2) return;
-
-      // PHASE 4: pinned + internal has room → capture the wheel event
+      if ((e.deltaY < 0 && atTop) || (e.deltaY > 0 && atBottom)) {
+        // Internal scroll exhausted — resume page scroll
+        engaged = false;
+        wrapper.style.pointerEvents = "none";
+        globalLenis.start();
+        return;
+      }
+      // Still has room — consume the event internally
       e.stopPropagation();
     };
 
     wrapper.addEventListener("wheel", handleWheel, { passive: false });
 
     return () => {
+      unsubscribe();
       innerLenis.destroy();
       wrapper.removeEventListener("wheel", handleWheel);
+      wrapper.style.pointerEvents = "";
+      if (engaged) globalLenis.start();
     };
   }, [globalLenis]);
 
