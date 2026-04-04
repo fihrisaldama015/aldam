@@ -21,11 +21,21 @@ export default function Home() {
     <main className="bg-[#0f172a] relative">
       <Navbar sections={SECTIONS} />
       <ScrollProgress />
-      <ScrollSection id="home" index={0}><Hero /></ScrollSection>
-      <ScrollSection id="skills" index={1}><Highlight /></ScrollSection>
-      <ScrollSection id="projects" index={2}><Projects /></ScrollSection>
-      <ScrollSection id="experience" index={3} noDwell><ExperienceTimeline /></ScrollSection>
-      <ScrollSection id="contact" index={4}><Contact /></ScrollSection>
+      <ScrollSection id="home" index={0}>
+        <Hero />
+      </ScrollSection>
+      <ScrollSection id="skills" index={1}>
+        <Highlight />
+      </ScrollSection>
+      <ScrollSection id="projects" index={2}>
+        <Projects />
+      </ScrollSection>
+      <ScrollSection id="experience" index={3} noDwell>
+        <ExperienceTimeline />
+      </ScrollSection>
+      <ScrollSection id="contact" index={4} noDwell>
+        <Contact />
+      </ScrollSection>
     </main>
   );
 }

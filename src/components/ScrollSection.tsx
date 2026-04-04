@@ -1,6 +1,6 @@
 "use client";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { useLenis } from "./LenisProvider";
 
 interface ScrollSectionProps {
@@ -13,6 +13,13 @@ interface ScrollSectionProps {
 
 const DWELL_THRESHOLD = 500; // total wheel deltaY needed to leave the section
 
+/** True once the user has scrolled to this section (fires once, never resets) */
+const SectionActiveContext = createContext(false);
+
+export function useSectionActive() {
+  return useContext(SectionActiveContext);
+}
+
 export default function ScrollSection({
   children,
   id,
@@ -22,6 +29,7 @@ export default function ScrollSection({
   const { scrollY } = useScroll();
   const globalLenis = useLenis();
   const [vh, setVh] = useState(1000);
+  const [isActive, setIsActive] = useState(index === 0);
 
   useEffect(() => {
     const updateVh = () => setVh(window.innerHeight);
@@ -29,6 +37,15 @@ export default function ScrollSection({
     window.addEventListener("resize", updateVh);
     return () => window.removeEventListener("resize", updateVh);
   }, []);
+
+  // Mark section as active once scroll reaches it (fires once, never resets)
+  useEffect(() => {
+    if (index === 0) return; // hero is active by default
+    const threshold = index * vh * 0.9; // activate just before section is fully pinned
+    return scrollY.on("change", (v) => {
+      if (v >= threshold) setIsActive(true);
+    });
+  }, [scrollY, index, vh]);
 
   // Scale/fade this section as the NEXT one slides over it
   const startScroll = index * vh;
@@ -40,6 +57,10 @@ export default function ScrollSection({
   // Dwell logic: freeze the page when this section is fully pinned
   useEffect(() => {
     if (noDwell || !globalLenis) return;
+
+    // Touch devices have native momentum — dwell would permanently freeze scroll
+    const isTouchDevice = window.matchMedia("(hover: none) and (pointer: coarse)").matches;
+    if (isTouchDevice) return;
 
     const PIN_Y = index * window.innerHeight;
 
@@ -91,16 +112,18 @@ export default function ScrollSection({
   }, [globalLenis, index, noDwell]);
 
   return (
-    <motion.section
-      id={id}
-      className="sticky top-0 h-screen w-full flex flex-col justify-center overflow-hidden bg-[#0f172a]"
-    >
-      <motion.div
-        style={{ scale, opacity, y }}
-        className="w-full h-full flex flex-col items-center justify-center origin-top relative"
+    <SectionActiveContext.Provider value={isActive}>
+      <motion.section
+        id={id}
+        className="sticky top-0 h-screen w-full flex flex-col justify-center overflow-hidden bg-[#0f172a]"
       >
-        {children}
-      </motion.div>
-    </motion.section>
+        <motion.div
+          style={{ scale, opacity, y }}
+          className="w-full h-full flex flex-col items-center justify-center origin-top relative"
+        >
+          {children}
+        </motion.div>
+      </motion.section>
+    </SectionActiveContext.Provider>
   );
 }

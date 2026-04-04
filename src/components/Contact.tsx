@@ -1,5 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
+import { useSectionActive } from "./ScrollSection";
 
 type Accent = "amber" | "cyan" | "blue";
 
@@ -31,6 +32,8 @@ const ACCENT_MAP: Record<Accent, string> = {
 };
 
 export default function Contact() {
+  const isActive = useSectionActive();
+
   return (
     <div className="w-full h-full flex items-center justify-center px-6 lg:px-16 relative overflow-hidden">
       <div className="absolute inset-0 pointer-events-none">
@@ -39,10 +42,9 @@ export default function Contact() {
 
       <div className="max-w-3xl w-full mx-auto py-20 text-center">
         <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true, amount: 0.3 }}
+          animate={isActive ? { opacity: 1, scale: 1 } : {}}
           transition={{ duration: 0.7, ease: "easeOut" }}
+          style={{ opacity: 0, scale: 0.9 }}
         >
           <span className="text-cyan-400 text-sm font-semibold tracking-[4px] uppercase">
             Get in touch
@@ -60,13 +62,10 @@ export default function Contact() {
 
         <motion.div
           className="flex flex-col sm:flex-row gap-4 justify-center mt-12"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.3 }}
+          animate={isActive ? "visible" : {}}
           variants={{
-            hidden: {},
             visible: {
-              transition: { staggerChildren: 0.1, delayChildren: 0.3 },
+              transition: { staggerChildren: 0.1, delayChildren: 0.4 },
             },
           }}
         >
@@ -76,10 +75,11 @@ export default function Contact() {
               href={link.href}
               target="_blank"
               variants={{
-                hidden: { opacity: 0, y: 20 },
                 visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
               }}
-              className={`border rounded-xl px-6 py-4 transition-all ${ACCENT_MAP[link.accent]}`}
+              style={{ opacity: 0, y: 20 }}
+              // transition-colors only — keep CSS off opacity/transform
+              className={`border rounded-xl px-6 py-4 transition-colors ${ACCENT_MAP[link.accent]}`}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
@@ -91,10 +91,9 @@ export default function Contact() {
 
         <motion.p
           className="text-slate-600 text-sm mt-16"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.8 }}
+          animate={isActive ? { opacity: 1 } : {}}
+          transition={{ delay: 0.9 }}
+          style={{ opacity: 0 }}
         >
           Aldam · {new Date().getFullYear()} · Full-Stack Engineer
         </motion.p>

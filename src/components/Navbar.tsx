@@ -21,7 +21,7 @@ export default function Navbar({ sections }: NavbarProps) {
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
-      
+
       // Calculate active section based on scroll position accurately for sticky 100vh elements
       if (typeof window !== "undefined") {
         const index = Math.round(window.scrollY / window.innerHeight);
@@ -31,15 +31,16 @@ export default function Navbar({ sections }: NavbarProps) {
       }
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
-    
+
     // Trigger once on mount
     handleScroll();
-    
+
     return () => window.removeEventListener("scroll", handleScroll);
   }, [sections]);
 
   const scrollTo = (id: string) => {
     if (lenis) {
+      lenis.start();
       lenis.scrollTo(`#${id}`, { offset: 0 });
     } else {
       document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
@@ -96,7 +97,7 @@ export default function Navbar({ sections }: NavbarProps) {
           onClick={() =>
             window.open(
               "https://wa.me/6285156549426?text=Halo%20Fihris%20Aldama, i want to discuss about my project",
-              "_blank"
+              "_blank",
             )
           }
         >
@@ -120,11 +121,7 @@ export default function Navbar({ sections }: NavbarProps) {
             strokeLinecap="round"
             strokeLinejoin="round"
             strokeWidth={2}
-            d={
-              menuOpen
-                ? "M6 18L18 6M6 6l12 12"
-                : "M4 6h16M4 12h16M4 18h16"
-            }
+            d={menuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"}
           />
         </svg>
       </button>

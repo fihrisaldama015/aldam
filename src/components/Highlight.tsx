@@ -1,6 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { useSectionActive } from "./ScrollSection";
 
 type Skill = { img: string; name: string };
 
@@ -32,6 +33,8 @@ const SKILLS: Skill[] = [
 ];
 
 export default function Highlight() {
+  const isActive = useSectionActive();
+
   return (
     <div className="w-full h-full flex items-center justify-center px-6 lg:px-16 relative overflow-hidden">
       <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none" />
@@ -39,10 +42,9 @@ export default function Highlight() {
       <div className="max-w-5xl w-full mx-auto py-20">
         <motion.div
           className="text-center mb-16"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
+          animate={isActive ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
+          style={{ opacity: 0, y: 30 }}
         >
           <span className="text-cyan-400 text-sm font-semibold tracking-[4px] uppercase">
             What I work with
@@ -55,10 +57,9 @@ export default function Highlight() {
         {/* Stats */}
         <motion.div
           className="flex justify-center gap-16 mb-16"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
+          animate={isActive ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.1 }}
+          style={{ opacity: 0, y: 20 }}
         >
           <div className="text-center">
             <span className="text-5xl font-black text-amber-400">4+</span>
@@ -77,19 +78,15 @@ export default function Highlight() {
         {/* Skills grid */}
         <motion.div
           className="flex flex-wrap gap-3 justify-center"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
+          animate={isActive ? "visible" : {}}
           variants={{
-            hidden: {},
-            visible: { transition: { staggerChildren: 0.05 } },
+            visible: { transition: { staggerChildren: 0.05, delayChildren: 0.2 } },
           }}
         >
           {SKILLS.map((skill, i) => (
             <motion.div
               key={i}
               variants={{
-                hidden: { opacity: 0, y: 20, scale: 0.9 },
                 visible: {
                   opacity: 1,
                   y: 0,
@@ -97,6 +94,7 @@ export default function Highlight() {
                   transition: { type: "spring", stiffness: 300, damping: 20 },
                 },
               }}
+              style={{ opacity: 0, y: 20, scale: 0.9 }}
               className="flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-white/5 hover:border-cyan-400/40 hover:bg-cyan-500/10 transition-all cursor-default"
             >
               <Image

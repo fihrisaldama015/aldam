@@ -83,12 +83,49 @@ const ExperienceTimeline = () => {
       e.stopPropagation();
     };
 
+    // Touch handler: same boundary detection for mobile
+    let touchStartY = 0;
+    let shouldRelease = false;
+
+    const handleTouchStart = (e: TouchEvent) => {
+      if (!engaged) return;
+      touchStartY = e.touches[0].clientY;
+      shouldRelease = false;
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (!engaged) return;
+      const deltaY = touchStartY - e.touches[0].clientY; // positive = scroll down
+
+      const atTop = wrapper.scrollTop <= 2;
+      const atBottom =
+        wrapper.scrollTop + wrapper.clientHeight >= wrapper.scrollHeight - 2;
+
+      if ((deltaY < 0 && atTop) || (deltaY > 0 && atBottom)) {
+        shouldRelease = true;
+      }
+    };
+
+    const handleTouchEnd = () => {
+      if (!engaged || !shouldRelease) return;
+      engaged = false;
+      shouldRelease = false;
+      wrapper.style.pointerEvents = "none";
+      globalLenis.start();
+    };
+
     wrapper.addEventListener("wheel", handleWheel, { passive: false });
+    wrapper.addEventListener("touchstart", handleTouchStart, { passive: true });
+    wrapper.addEventListener("touchmove", handleTouchMove, { passive: true });
+    wrapper.addEventListener("touchend", handleTouchEnd, { passive: true });
 
     return () => {
       unsubscribe();
       innerLenis.destroy();
       wrapper.removeEventListener("wheel", handleWheel);
+      wrapper.removeEventListener("touchstart", handleTouchStart);
+      wrapper.removeEventListener("touchmove", handleTouchMove);
+      wrapper.removeEventListener("touchend", handleTouchEnd);
       wrapper.style.pointerEvents = "";
       if (engaged) globalLenis.start();
     };
