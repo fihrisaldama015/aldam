@@ -1,45 +1,30 @@
-"use client"
+"use client";
+import Contact from "@/components/Contact";
 import ExperienceTimeline from "@/components/Experience";
 import Hero from "@/components/Hero";
 import Highlight from "@/components/Highlight";
 import Navbar from "@/components/Navbar";
-import { useRef } from "react";
+import Projects from "@/components/Projects";
+import ScrollProgress from "@/components/ScrollProgress";
+
+const SECTIONS = [
+  { id: "home", label: "Home" },
+  { id: "skills", label: "Skills" },
+  { id: "projects", label: "Projects" },
+  { id: "experience", label: "Experience" },
+  { id: "contact", label: "Contact" },
+];
 
 export default function Home() {
-  // Create refs for each section
-  const heroRef = useRef(null);
-  const highlightRef = useRef(null);
-  const experienceRef = useRef(null);
-
-  // Define sections with their refs and ids for the navbar
-  const sections = [
-    { id: "home", ref: heroRef, label: "Home" },
-    { id: "highlights", ref: highlightRef, label: "Highlights" },
-    { id: "experience", ref: experienceRef, label: "Experience" },
-  ];
-  
-  // Function to handle scrolling to a section
-  const scrollToSection = (ref: any) => {
-    ref.current?.scrollIntoView({ 
-      behavior: "smooth",
-      block: "start"
-    });
-  };
   return (
-    <main className="bg-[#fafafa] p-6">
-      <Navbar sections={sections} scrollToSection={scrollToSection} />
-      <div ref={heroRef} id="home">
-        <Hero />
-      </div>
-      
-      <div ref={highlightRef} id="highlights">
-        <Highlight />
-      </div>
-      
-      <div ref={experienceRef} id="experience">
-        <ExperienceTimeline />
-      </div>
-      
+    <main className="bg-[#0f172a] min-h-screen">
+      <Navbar sections={SECTIONS} />
+      <ScrollProgress />
+      <Hero />
+      <Highlight />
+      <Projects />
+      <ExperienceTimeline />
+      <Contact />
     </main>
   );
 }

@@ -1,249 +1,159 @@
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+"use client";
+import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useState } from "react";
+import { useLenis } from "./LenisProvider";
 
-interface NavbarProps {
-  sections: any;
-  scrollToSection: any;
+interface Section {
+  id: string;
+  label: string;
 }
 
-function Navbar({ sections, scrollToSection }: NavbarProps) {
-  const [scrolled, setScrolled] = useState(false);
+interface NavbarProps {
+  sections: Section[];
+}
+
+export default function Navbar({ sections }: NavbarProps) {
   const [activeSection, setActiveSection] = useState("home");
+  const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const lenis = useLenis();
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 10);
-
-      // Determine which section is currently in view
-      const sectionInView = determineActiveSection();
-      if (sectionInView && sectionInView !== activeSection) {
-        setActiveSection(sectionInView);
-      }
-    };
-
-    // Helper function to determine which section is in view
-    const determineActiveSection = () => {
+      setScrolled(window.scrollY > 20);
       for (const section of sections) {
-        if (!section.ref.current) continue;
-
-        const rect = section.ref.current.getBoundingClientRect();
-        // If the top of the section is near the top of the viewport
+        const el = document.getElementById(section.id);
+        if (!el) continue;
+        const rect = el.getBoundingClientRect();
         if (rect.top <= 100 && rect.bottom > 100) {
-          return section.id;
+          setActiveSection(section.id);
+          break;
         }
       }
-      return activeSection;
     };
-
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [sections, activeSection]);
+  }, [sections]);
 
-  // Animation variants
-  const navbarVariants = {
-    hidden: { opacity: 0, y: -20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.5,
-        ease: "easeOut",
-      },
-    },
-  };
-
-  const logoVariants = {
-    hover: {
-      scale: 1.05,
-      color: "#0284c7",
-      transition: { duration: 0.3 },
-    },
-  };
-
-  const glowVariants = {
-    initial: { scale: 1, opacity: 0.7 },
-    animate: {
-      scale: [1, 1.2, 1],
-      opacity: [0.7, 0.4, 0.7],
-      transition: {
-        duration: 4,
-        repeat: Infinity,
-        ease: "easeInOut",
-      },
-    },
-  };
-
-  const menuVariants = {
-    closed: {
-      opacity: 0,
-      height: 0,
-      transition: {
-        duration: 0.3,
-        ease: "easeInOut",
-      },
-    },
-    open: {
-      opacity: 1,
-      height: "auto",
-      transition: {
-        duration: 0.3,
-        ease: "easeInOut",
-        staggerChildren: 0.1,
-        delayChildren: 0.1,
-      },
-    },
-  };
-
-  const itemVariants = {
-    closed: { opacity: 0, y: -10 },
-    open: { opacity: 1, y: 0 },
+  const scrollTo = (id: string) => {
+    if (lenis) {
+      lenis.scrollTo(`#${id}`, { offset: 0 });
+    } else {
+      document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+    }
+    setMenuOpen(false);
   };
 
   return (
     <motion.nav
-      className={`py-4 sm:px-6 px-4 rounded-xl flex flex-col md:flex-row justify-between items-center backdrop-blur-sm ${scrolled ? "shadow-md bg-white/80" : "bg-transparent"} transition-all duration-300 sticky top-3 z-10`}
-      initial="hidden"
-      animate="visible"
-      variants={navbarVariants}
+      className={`fixed top-0 left-0 right-0 z-50 px-6 py-4 flex justify-between items-center transition-all duration-300 ${
+        scrolled
+          ? "bg-slate-900/90 backdrop-blur-md border-b border-white/5"
+          : "bg-transparent"
+      }`}
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
     >
-      <div className="w-full md:w-auto flex justify-between items-center">
-        <div className="relative flex gap-4 items-center">
-          <motion.div
-            className="absolute -right-8 -bottom-[150px] bg-sky-600/30 w-[180px] h-[180px] rounded-full blur-3xl"
-            variants={glowVariants}
-            initial="initial"
-            animate="animate"
-          />
+      <motion.button
+        className="text-white font-black text-lg tracking-tight"
+        onClick={() => scrollTo("home")}
+        whileHover={{ color: "#f59e0b" }}
+        transition={{ duration: 0.2 }}
+      >
+        aldam<span className="text-amber-400">.</span>me
+      </motion.button>
 
-          <motion.div
-            className="absolute left-4 -bottom-[100px] bg-indigo-500/20 w-[120px] h-[120px] rounded-full blur-2xl"
-            variants={glowVariants}
-            initial="initial"
-            animate="animate"
-            transition={{ delay: 1.5 }}
-          />
-
-          <motion.h1
-            className="font-semibold text-lg text-[#1e293b] relative z-10"
-            variants={logoVariants}
-            whileHover="hover"
-            onClick={() => scrollToSection(sections[0].ref)}
+      {/* Desktop nav */}
+      <div className="hidden md:flex items-center gap-8">
+        {sections.map((section) => (
+          <button
+            key={section.id}
+            onClick={() => scrollTo(section.id)}
+            className={`text-sm font-semibold relative transition-colors ${
+              activeSection === section.id
+                ? "text-amber-400"
+                : "text-slate-400 hover:text-white"
+            }`}
           >
-            aldam.me
-          </motion.h1>
-        </div>
-
-        {/* Mobile menu button */}
+            {section.label}
+            {activeSection === section.id && (
+              <motion.div
+                layoutId="navDot"
+                className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-amber-400 rounded-full"
+                transition={{ type: "spring", stiffness: 400, damping: 30 }}
+              />
+            )}
+          </button>
+        ))}
         <motion.button
-          className="block md:hidden text-gray-700"
-          onClick={() => setMenuOpen(!menuOpen)}
+          className="bg-amber-400 text-slate-900 px-4 py-2 rounded-lg text-sm font-bold"
+          whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
+          onClick={() =>
+            window.open(
+              "https://wa.me/6285156549426?text=Halo%20Fihris%20Aldama, i want to discuss about my project",
+              "_blank"
+            )
+          }
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d={menuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"}
-            />
-          </svg>
+          Contact Me
         </motion.button>
       </div>
 
-      {/* Navigation for desktop */}
-      <div className="hidden md:flex relative">
-        <motion.div
-          className="flex gap-6 items-center"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3, duration: 0.5 }}
+      {/* Mobile menu button */}
+      <button
+        className="md:hidden text-slate-400 hover:text-white"
+        onClick={() => setMenuOpen(!menuOpen)}
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-6 w-6"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
         >
-          {sections.map((section: any, index: any) => (
-            <motion.button
-              key={section.id}
-              onClick={() => scrollToSection(section.ref)}
-              className={`text-gray-700 font-medium cursor-pointer text-sm relative ${activeSection === section.id ? "text-sky-600" : "hover:text-sky-600"}`}
-              whileHover={{ scale: 1.1 }}
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 * index, duration: 0.3 }}
-            >
-              {section.label}
-              {activeSection === section.id && (
-                <motion.div
-                  className="absolute -bottom-2 left-0 right-0 h-0.5 bg-sky-600"
-                  layoutId="activeSection"
-                  transition={{ duration: 0.3 }}
-                />
-              )}
-            </motion.button>
-          ))}
-
-          <motion.button
-            className="bg-gradient-to-r from-sky-500 to-indigo-500 text-white px-4 py-2 rounded-lg text-sm font-medium"
-            whileHover={{
-              scale: 1.05,
-              boxShadow: "0 4px 12px rgba(2, 132, 199, 0.3)",
-            }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() =>
-              window.open(
-                "https://wa.me/6285156549426?text=Halo%20Fihris%20Aldama, i want to discuss about my project",
-                "_blank",
-              )
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d={
+              menuOpen
+                ? "M6 18L18 6M6 6l12 12"
+                : "M4 6h16M4 12h16M4 18h16"
             }
-          >
-            Contact Me
-          </motion.button>
-        </motion.div>
-      </div>
+          />
+        </svg>
+      </button>
 
       {/* Mobile menu */}
       <AnimatePresence>
         {menuOpen && (
           <motion.div
-            className="w-full md:hidden mt-4"
-            variants={menuVariants}
-            initial="closed"
-            animate="open"
-            exit="closed"
+            className="absolute top-full left-0 right-0 bg-slate-900/95 backdrop-blur-md border-b border-white/5 md:hidden"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
           >
-            <motion.div className="flex flex-col gap-4 py-2 bg-white/80 backdrop-blur-sm rounded-lg shadow-lg">
-              {sections.map((section: any, index: any) => (
-                <motion.button
+            <div className="flex flex-col p-4 gap-2">
+              {sections.map((section) => (
+                <button
                   key={section.id}
-                  onClick={() => {
-                    scrollToSection(section.ref);
-                    setMenuOpen(false);
-                  }}
-                  className={`px-4 py-2 text-left text-gray-700 font-medium ${activeSection === section.id ? "bg-sky-100 text-sky-600" : "hover:bg-gray-100"}`}
-                  variants={itemVariants}
-                  whileTap={{ scale: 0.98 }}
+                  onClick={() => scrollTo(section.id)}
+                  className={`text-left px-4 py-3 rounded-lg text-sm font-semibold transition-colors ${
+                    activeSection === section.id
+                      ? "bg-amber-400/10 text-amber-400"
+                      : "text-slate-400 hover:text-white hover:bg-white/5"
+                  }`}
                 >
                   {section.label}
-                </motion.button>
+                </button>
               ))}
-              <motion.button
-                className="mx-4 my-2 bg-gradient-to-r from-sky-500 to-indigo-500 text-white px-4 py-2 rounded-lg text-sm font-medium"
-                variants={itemVariants}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                Contact Me
-              </motion.button>
-            </motion.div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
     </motion.nav>
   );
 }
-
-export default Navbar;
