@@ -12,21 +12,23 @@ import {
 } from "lucide-react";
 import Lenis from "lenis";
 import { useEffect, useRef, useState } from "react";
+import { useLenis } from "./LenisProvider";
 import { educationAndOrg, workExperiences } from "../data/experience";
 
 const ExperienceTimeline = () => {
   const [expandedIds, setExpandedIds] = useState<number[]>([]);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+  const globalLenis = useLenis();
 
   useEffect(() => {
     if (!wrapperRef.current || !contentRef.current) return;
 
-    // Section is at index 3, so it pins at 3 * window.innerHeight
+    // Section pins at index 3 × viewport height
     const SECTION_INDEX = 3;
 
     // Create an internal Lenis instance for smooth scrolling within this section
-    const lenis = new Lenis({
+    const innerLenis = new Lenis({
       wrapper: wrapperRef.current,
       content: contentRef.current,
       autoRaf: true,
@@ -36,28 +38,33 @@ const ExperienceTimeline = () => {
 
     const handleWheel = (e: WheelEvent) => {
       const sectionPinY = SECTION_INDEX * window.innerHeight;
-      const isPinned = window.scrollY >= sectionPinY - 2; // -2px tolerance
 
-      // PHASE 1: section not yet fully pinned — let global Lenis handle page scroll
+      // Use global Lenis animated scroll position (visual position the user sees)
+      // This lags behind window.scrollY during momentum, so gate fires at the
+      // exact visual moment the section becomes fully pinned.
+      const visualScrollY = globalLenis?.scroll ?? window.scrollY;
+      const isPinned = visualScrollY >= sectionPinY - 8;
+
+      // PHASE 1: section not yet fully visible — let global Lenis page-scroll continue
       if (!isPinned) return;
 
-      // PHASE 2: section is pinned, but internal scroll is at the start and user scrolls up
+      // PHASE 2: pinned, internal at top, scrolling up → hand back to page
       if (e.deltaY < 0 && wrapper.scrollTop <= 0) return;
 
-      // PHASE 3: section is pinned, but internal scroll is exhausted and user scrolls down
+      // PHASE 3: pinned, internal at bottom, scrolling down → hand back to page
       if (e.deltaY > 0 && wrapper.scrollTop + wrapper.clientHeight >= wrapper.scrollHeight - 2) return;
 
-      // PHASE 4: section is pinned + internal scroll has room — capture it
+      // PHASE 4: pinned + internal has room → capture the wheel event
       e.stopPropagation();
     };
 
     wrapper.addEventListener("wheel", handleWheel, { passive: false });
 
     return () => {
-      lenis.destroy();
+      innerLenis.destroy();
       wrapper.removeEventListener("wheel", handleWheel);
     };
-  }, []);
+  }, [globalLenis]);
 
   const toggleExpand = (id: number) => {
     setExpandedIds((prev) =>
