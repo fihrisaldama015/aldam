@@ -38,6 +38,8 @@ const ExperienceTimeline = () => {
       wrapper,
       content: contentRef.current,
       autoRaf: true,
+      wheelMultiplier: 0.5, // Match global scroll resistance
+      lerp: 0.06,
     });
 
     // Detect when global scroll crosses the Experience pin point in either direction
