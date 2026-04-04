@@ -24,6 +24,12 @@ const ExperienceTimeline = () => {
   useEffect(() => {
     if (!wrapperRef.current || !contentRef.current || !globalLenis) return;
 
+    // Mobile/touch devices should use normal page scroll to avoid lock dead-ends.
+    const isTouchDevice = window.matchMedia(
+      "(hover: none) and (pointer: coarse)",
+    ).matches;
+    if (isTouchDevice) return;
+
     const PIN_Y = 3 * window.innerHeight;
     const wrapper = wrapperRef.current;
 
@@ -61,7 +67,7 @@ const ExperienceTimeline = () => {
           }
         }
         prevScroll = scroll;
-      }
+      },
     );
 
     // Wheel handler: boundary detection to release back to global Lenis
@@ -133,7 +139,7 @@ const ExperienceTimeline = () => {
 
   const toggleExpand = (id: number) => {
     setExpandedIds((prev) =>
-      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id],
     );
   };
 
@@ -144,7 +150,7 @@ const ExperienceTimeline = () => {
         return m ? parseInt(m[0]) : 0;
       };
       return getEndYear(b.duration) - getEndYear(a.duration);
-    }
+    },
   );
 
   const getTypeIcon = (type: string) => {
@@ -161,7 +167,7 @@ const ExperienceTimeline = () => {
   };
 
   return (
-    <div 
+    <div
       ref={wrapperRef}
       className="w-full h-full flex flex-col pt-24 items-center px-6 lg:px-16 relative overflow-y-auto overflow-x-hidden custom-scrollbar"
     >
