@@ -10,11 +10,47 @@ import {
   MapPin,
   Users,
 } from "lucide-react";
-import { useState } from "react";
+import Lenis from "lenis";
+import { useEffect, useRef, useState } from "react";
 import { educationAndOrg, workExperiences } from "../data/experience";
 
 const ExperienceTimeline = () => {
   const [expandedIds, setExpandedIds] = useState<number[]>([]);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!wrapperRef.current || !contentRef.current) return;
+    
+    // Create an internal Lenis instance for smooth scrolling within this section
+    const lenis = new Lenis({
+      wrapper: wrapperRef.current,
+      content: contentRef.current,
+      autoRaf: true,
+    });
+
+    const wrapper = wrapperRef.current;
+
+    // Custom scroll chaining logic
+    const handleWheel = (e: WheelEvent) => {
+      // Allow global Lenis to take over if we hit the boundaries
+      if (e.deltaY < 0 && wrapper.scrollTop <= 0) {
+        return; // Bubble up for scroll up
+      }
+      if (e.deltaY > 0 && wrapper.scrollTop + wrapper.clientHeight >= wrapper.scrollHeight - 1) {
+        return; // Bubble up for scroll down 
+      }
+      // Otherwise, keep the event local to make the internal Lenis scroll smoothly
+      e.stopPropagation();
+    };
+
+    wrapper.addEventListener("wheel", handleWheel, { passive: false });
+
+    return () => {
+      lenis.destroy();
+      wrapper.removeEventListener("wheel", handleWheel);
+    };
+  }, []);
 
   const toggleExpand = (id: number) => {
     setExpandedIds((prev) =>
@@ -46,10 +82,12 @@ const ExperienceTimeline = () => {
   };
 
   return (
-    <div className="w-full h-full flex flex-col pt-24 items-center px-6 lg:px-16 relative overflow-y-auto overflow-x-hidden">
-      <div className="absolute top-1/4 left-0 w-80 h-80 bg-blue-500/5 rounded-full blur-3xl pointer-events-none" />
-
-      <div className="max-w-4xl w-full mx-auto py-20">
+    <div 
+      ref={wrapperRef}
+      className="w-full h-full flex flex-col pt-24 items-center px-6 lg:px-16 relative overflow-y-auto overflow-x-hidden custom-scrollbar"
+    >
+      <div ref={contentRef} className="w-full max-w-4xl mx-auto py-20 relative">
+        <div className="absolute top-0 left-0 w-80 h-80 bg-blue-500/5 rounded-full blur-3xl pointer-events-none" />
         <motion.div
           className="mb-16"
           initial={{ opacity: 0, y: 30 }}
